@@ -1,0 +1,16 @@
+# Crie o arquivo .gitignore
+echo "# Dependências
+node_modules/
+.env
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vercel
+.vercel/
+
+# IDE
+.vscode/
+.idea/" > .gitignore
