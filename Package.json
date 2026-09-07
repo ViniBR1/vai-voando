@@ -1,18 +1,12 @@
 {
-  "name": "vai-voando-backend",
+  "name": "vai-voando",
   "version": "1.0.0",
-  "description": "Backend completo para agência de viagens Vai Voando",
-  "main": "backend.js",
+  "description": "Agência de Viagens Vai Voando",
   "type": "module",
   "scripts": {
-    "start": "node backend.js",
-    "dev": "node --watch backend.js",
-    "init-db": "node -e \"import('./backend.js').then(m => m.initDatabase())\""
+    "vercel-build": "echo Hello"
   },
   "dependencies": {
     "pg": "^8.11.3"
-  },
-  "devDependencies": {
-    "vercel": "^32.0.0"
   }
 }
