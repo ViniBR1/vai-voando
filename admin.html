@@ -197,7 +197,7 @@
         }
 
         .form-row input,
-        .form-row textarea {
+        .form-row select {
             flex: 1;
             min-width: 150px;
             padding: 0.7rem 1rem;
@@ -207,46 +207,9 @@
             transition: 0.2s;
         }
 
-        .form-row input:focus,
-        .form-row textarea:focus {
+        .form-row input:focus {
             border-color: #1a4b63;
             outline: none;
-        }
-
-        .form-row textarea {
-            min-height: 60px;
-            resize: vertical;
-        }
-
-        .form-row .image-preview {
-            width: 120px;
-            height: 120px;
-            border: 2px dashed #e2eaf3;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .form-row .image-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .form-row .image-preview .placeholder {
-            color: #5f6f80;
-            font-size: 0.8rem;
-            text-align: center;
-        }
-
-        .form-row .image-preview .placeholder i {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 0.3rem;
         }
 
         .btn {
@@ -336,23 +299,8 @@
             background: #f8faff;
         }
 
-        table .image-cell img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        table .image-cell .no-image {
-            width: 50px;
-            height: 50px;
-            background: #eef3fa;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #5f6f80;
+        table .emoji-cell {
+            font-size: 1.8rem;
         }
 
         table .actions-cell {
@@ -424,14 +372,12 @@
 
         .modal-box {
             background: white;
-            max-width: 550px;
+            max-width: 500px;
             width: 95%;
             padding: 2rem;
             border-radius: 24px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
             position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
         }
 
         .modal-box h3 {
@@ -453,8 +399,7 @@
             color: #e02b4a;
         }
 
-        .modal-box input,
-        .modal-box textarea {
+        .modal-box input {
             width: 100%;
             padding: 0.7rem 1rem;
             margin-bottom: 0.8rem;
@@ -463,41 +408,9 @@
             font-size: 0.95rem;
         }
 
-        .modal-box input:focus,
-        .modal-box textarea:focus {
+        .modal-box input:focus {
             border-color: #1a4b63;
             outline: none;
-        }
-
-        .modal-box .image-preview-modal {
-            width: 100%;
-            max-height: 200px;
-            border: 2px dashed #e2eaf3;
-            border-radius: 12px;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .modal-box .image-preview-modal img {
-            width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-        }
-
-        .modal-box .image-preview-modal .placeholder {
-            padding: 2rem;
-            color: #5f6f80;
-            text-align: center;
-        }
-
-        .modal-box .image-preview-modal .placeholder i {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 0.5rem;
         }
 
         /* ===== RESPONSIVO ===== */
@@ -549,11 +462,6 @@
             .page-header .stats {
                 width: 100%;
                 justify-content: space-between;
-            }
-
-            .form-row .image-preview {
-                width: 100%;
-                height: 150px;
             }
         }
 
@@ -662,19 +570,11 @@
                 <button class="close-modal" onclick="closeEditModal()">&times;</button>
             </h3>
             <input type="hidden" id="editId">
-            
-            <div class="image-preview-modal" onclick="document.getElementById('editImageInput').click()">
-                <div id="editImagePreview" class="placeholder">
-                    <i class="fas fa-image"></i>
-                    <span>Clique para selecionar imagem</span>
-                </div>
-            </div>
-            <input type="file" id="editImageInput" accept="image/*" style="display:none;" onchange="previewEditImage(event)">
-            
             <input type="text" id="editNome" placeholder="Nome do destino">
             <input type="text" id="editPreco" placeholder="Preço (ex: R$ 199,90)">
+            <input type="text" id="editEmoji" placeholder="Emoji (ex: 🏖️)">
             <input type="text" id="editParcelas" placeholder="Parcelas (ex: 10x)">
-            <textarea id="editTexto" placeholder="Descrição do pacote"></textarea>
+            <input type="text" id="editTexto" placeholder="Descrição">
             <button class="btn btn-primary" onclick="salvarEdicao()" style="width:100%;">
                 <i class="fas fa-save"></i> Salvar Alterações
             </button>
@@ -692,14 +592,15 @@
         let destinos = [];
         let currentPage = 'dashboard';
         let currentUser = null;
-        let imagemBase64 = null;
 
         // ============================================================
         // VERIFICAR LOGIN
         // ============================================================
         function checkAuth() {
+            // Verificar se está logado como admin
             const user = JSON.parse(sessionStorage.getItem('adminUser') || 'null');
             if (!user || user.role !== 'admin') {
+                // Redirecionar para o site principal
                 window.location.href = '/vaivoando.html';
                 return false;
             }
@@ -738,14 +639,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(destino)
                 });
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao adicionar destino');
-                }
+                if (!response.ok) throw new Error('Erro ao adicionar destino');
                 return await response.json();
             } catch (error) {
                 console.error('❌ Erro addDestino:', error);
-                showToast(error.message || 'Erro ao adicionar destino', 'error');
+                showToast('Erro ao adicionar destino', 'error');
                 throw error;
             }
         }
@@ -771,14 +669,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Erro ao atualizar destino');
-                }
+                if (!response.ok) throw new Error('Erro ao atualizar destino');
                 return await response.json();
             } catch (error) {
                 console.error('❌ Erro updateDestino:', error);
-                showToast(error.message || 'Erro ao atualizar destino', 'error');
+                showToast('Erro ao atualizar destino', 'error');
                 throw error;
             }
         }
@@ -788,17 +683,17 @@
         // ============================================================
         function getDefaultDestinos() {
             return [
-                { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", imagem: null, parcelas: "10x",
+                { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", emoji: "🏖️", parcelas: "10x",
                     texto: "Hotel Vilarejo Praia · All Inclusive", whats: "5521991864436" },
-                { id: 2, nome: "Búzios", preco: "R$ 219,90", imagem: null, parcelas: "12x",
+                { id: 2, nome: "Búzios", preco: "R$ 219,90", emoji: "⛵", parcelas: "12x",
                     texto: "Pacote Romance · 3 noites", whats: "5521991864436" },
-                { id: 3, nome: "Cabo Frio", preco: "R$ 189,00", imagem: null, parcelas: "10x",
+                { id: 3, nome: "Cabo Frio", preco: "R$ 189,00", emoji: "🌊", parcelas: "10x",
                     texto: "All inclusive + passeios", whats: "5521991864436" },
-                { id: 4, nome: "Angra dos Reis", preco: "R$ 267,50", imagem: null, parcelas: "12x",
+                { id: 4, nome: "Angra dos Reis", preco: "R$ 267,50", emoji: "⛰️", parcelas: "12x",
                     texto: "Ilhas e mergulho", whats: "5521991864436" },
-                { id: 5, nome: "Arraial do Cabo", preco: "R$ 204,30", imagem: null, parcelas: "10x",
+                { id: 5, nome: "Arraial do Cabo", preco: "R$ 204,30", emoji: "🐠", parcelas: "10x",
                     texto: "Pacote familiar", whats: "5521991864436" },
-                { id: 6, nome: "Paraty", preco: "R$ 298,00", imagem: null, parcelas: "12x",
+                { id: 6, nome: "Paraty", preco: "R$ 298,00", emoji: "⛪", parcelas: "12x",
                     texto: "História + praias", whats: "5521991864436" }
             ];
         }
@@ -826,24 +721,13 @@
         }
 
         // ============================================================
-        // CONVERSÃO DE IMAGEM PARA BASE64
-        // ============================================================
-        function imagemParaBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        // ============================================================
         // PÁGINAS
         // ============================================================
         function loadPage(page) {
             currentPage = page;
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
 
+            // Ativar menu
             const menuItems = document.querySelectorAll('.menu-item');
             const pageMap = {
                 'dashboard': 0,
@@ -924,10 +808,7 @@
                         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
                             ${destinos.slice(0, 6).map(d => `
                                 <div style="background:#f8faff; padding:1rem; border-radius:12px; text-align:center;">
-                                    ${d.imagem ? 
-                                        `<img src="${d.imagem}" style="width:80px; height:80px; object-fit:cover; border-radius:50%; margin-bottom:0.5rem;">` :
-                                        `<div style="font-size:2.5rem;">✈️</div>`
-                                    }
+                                    <div style="font-size:2.5rem;">${d.emoji || '✈️'}</div>
                                     <div style="font-weight:600; margin:0.3rem 0;">${d.nome}</div>
                                     <div style="color:#1a4b63; font-weight:700;">${d.preco}</div>
                                 </div>
@@ -945,6 +826,7 @@
                 </div>
             `;
 
+            // Atualizar stats
             document.getElementById('totalDestinos').textContent = total;
             document.getElementById('totalClientes').textContent = '👥';
             document.getElementById('totalVendas').textContent = '💰';
@@ -983,7 +865,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Imagem</th>
+                                    <th>Emoji</th>
                                     <th>Nome</th>
                                     <th>Preço</th>
                                     <th>Parcelas</th>
@@ -994,16 +876,11 @@
                             <tbody>
                                 ${destinos.map(d => `
                                     <tr>
-                                        <td class="image-cell">
-                                            ${d.imagem ? 
-                                                `<img src="${d.imagem}" alt="${d.nome}">` :
-                                                `<div class="no-image">✈️</div>`
-                                            }
-                                        </td>
+                                        <td class="emoji-cell">${d.emoji || '✈️'}</td>
                                         <td><strong>${d.nome}</strong></td>
                                         <td style="color:#1a4b63; font-weight:700;">${d.preco}</td>
                                         <td>${d.parcelas || '10x'}</td>
-                                        <td style="font-size:0.85rem; color:#5f6f80; max-width:200px; word-wrap:break-word;">${d.texto || 'Pacote especial'}</td>
+                                        <td style="font-size:0.85rem; color:#5f6f80;">${d.texto || 'Pacote especial'}</td>
                                         <td>
                                             <div class="actions-cell">
                                                 <button class="btn btn-warning btn-sm" onclick="abrirEditar(${d.id})">
@@ -1028,7 +905,6 @@
         // ============================================================
         function renderAddForm() {
             const container = document.getElementById('pageContent');
-            imagemBase64 = null;
 
             container.innerHTML = `
                 <div class="card">
@@ -1037,27 +913,15 @@
                     </div>
                     <form id="addForm" onsubmit="handleAdd(event)">
                         <div class="form-row">
-                            <div style="flex: 1; min-width: 150px;">
-                                <label style="display:block; font-weight:600; margin-bottom:0.3rem; font-size:0.9rem;">
-                                    <i class="fas fa-image"></i> Imagem do Destino
-                                </label>
-                                <div class="image-preview" id="imagePreviewAdd" onclick="document.getElementById('imageInput').click()">
-                                    <div class="placeholder" id="placeholderAdd">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>Clique para adicionar<br>imagem</span>
-                                    </div>
-                                </div>
-                                <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="previewAddImage(event)">
-                                <button type="button" class="btn btn-sm btn-danger" onclick="removerImagemAdd()" style="margin-top:0.3rem;">
-                                    <i class="fas fa-times"></i> Remover imagem
-                                </button>
-                            </div>
-                            <div style="flex: 2;">
-                                <input type="text" id="addNome" placeholder="Nome do destino*" required>
-                                <input type="text" id="addPreco" placeholder="Preço* (ex: R$ 199,90)" required>
-                                <input type="text" id="addParcelas" placeholder="Parcelas (ex: 10x)" value="10x">
-                                <textarea id="addTexto" placeholder="Descrição do pacote (ex: Pacote especial com café da manhã)"></textarea>
-                            </div>
+                            <input type="text" id="addNome" placeholder="Nome do destino*" required>
+                            <input type="text" id="addPreco" placeholder="Preço* (ex: R$ 199,90)" required>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="addEmoji" placeholder="Emoji (ex: 🏖️)" value="✈️">
+                            <input type="text" id="addParcelas" placeholder="Parcelas (ex: 10x)" value="10x">
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="addTexto" placeholder="Descrição (ex: Pacote especial)">
                         </div>
                         <button type="submit" class="btn btn-success" style="width:100%;">
                             <i class="fas fa-save"></i> Adicionar Destino
@@ -1071,83 +935,12 @@
                     </div>
                     <ul style="color:#5f6f80; line-height:1.8; padding-left:1.2rem;">
                         <li>Preencha <strong>Nome</strong> e <strong>Preço</strong> (obrigatório)</li>
-                        <li>Adicione uma <strong>imagem</strong> para destacar o destino</li>
+                        <li>Use emojis para destacar os destinos (ex: 🏖️, ⛵, 🌊)</li>
                         <li>A descrição ajuda o cliente a entender o pacote</li>
                         <li>Após adicionar, o destino aparece automaticamente no site</li>
-                        <li><strong>Imagens são salvas em Base64 no banco de dados Neon</strong></li>
                     </ul>
                 </div>
             `;
-        }
-
-        // ============================================================
-        // PREVIEW DE IMAGEM - ADICIONAR
-        // ============================================================
-        async function previewAddImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                showToast('Por favor, selecione uma imagem válida', 'error');
-                return;
-            }
-
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Imagem muito grande. Máximo 5MB.', 'error');
-                return;
-            }
-
-            try {
-                imagemBase64 = await imagemParaBase64(file);
-                const preview = document.getElementById('imagePreviewAdd');
-                const placeholder = document.getElementById('placeholderAdd');
-                preview.innerHTML = `<img src="${imagemBase64}" alt="Preview">`;
-                showToast('✅ Imagem carregada com sucesso!', 'success');
-            } catch (error) {
-                console.error('Erro ao carregar imagem:', error);
-                showToast('Erro ao carregar imagem', 'error');
-            }
-        }
-
-        function removerImagemAdd() {
-            imagemBase64 = null;
-            const preview = document.getElementById('imagePreviewAdd');
-            const placeholder = document.getElementById('placeholderAdd');
-            preview.innerHTML = `
-                <div class="placeholder" id="placeholderAdd">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span>Clique para adicionar<br>imagem</span>
-                </div>
-            `;
-            document.getElementById('imageInput').value = '';
-        }
-
-        // ============================================================
-        // PREVIEW DE IMAGEM - EDITAR
-        // ============================================================
-        let editImagemBase64 = null;
-
-        function previewEditImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                showToast('Por favor, selecione uma imagem válida', 'error');
-                return;
-            }
-
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Imagem muito grande. Máximo 5MB.', 'error');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                editImagemBase64 = e.target.result;
-                const preview = document.getElementById('editImagePreview');
-                preview.innerHTML = `<img src="${editImagemBase64}" alt="Preview">`;
-            };
-            reader.readAsDataURL(file);
         }
 
         // ============================================================
@@ -1158,6 +951,7 @@
 
             const nome = document.getElementById('addNome').value.trim();
             const preco = document.getElementById('addPreco').value.trim();
+            const emoji = document.getElementById('addEmoji').value.trim() || '✈️';
             const parcelas = document.getElementById('addParcelas').value.trim() || '10x';
             const texto = document.getElementById('addTexto').value.trim() || 'Pacote especial';
 
@@ -1166,6 +960,7 @@
                 return;
             }
 
+            // Verificar duplicado
             if (destinos.some(d => d.nome.toLowerCase() === nome.toLowerCase())) {
                 showToast('⚠️ Este destino já existe!', 'error');
                 return;
@@ -1174,7 +969,7 @@
             const novoDestino = {
                 nome,
                 preco,
-                imagem: imagemBase64 || null,
+                emoji,
                 parcelas,
                 texto,
                 whats: '5521991864436'
@@ -1185,11 +980,13 @@
                 destinos = await fetchDestinos();
                 showToast('✅ Destino adicionado com sucesso!', 'success');
                 document.getElementById('addForm').reset();
-                removerImagemAdd();
+                document.getElementById('addEmoji').value = '✈️';
+                document.getElementById('addParcelas').value = '10x';
+                // Atualizar dashboard
                 document.getElementById('totalDestinos').textContent = destinos.length;
                 loadPage('destinos');
             } catch (error) {
-                showToast(error.message || 'Erro ao adicionar destino', 'error');
+                showToast('Erro ao adicionar destino', 'error');
             }
         }
 
@@ -1206,24 +1003,11 @@
             document.getElementById('editId').value = d.id;
             document.getElementById('editNome').value = d.nome;
             document.getElementById('editPreco').value = d.preco;
+            document.getElementById('editEmoji').value = d.emoji || '✈️';
             document.getElementById('editParcelas').value = d.parcelas || '10x';
             document.getElementById('editTexto').value = d.texto || '';
 
-            editImagemBase64 = d.imagem || null;
-            const preview = document.getElementById('editImagePreview');
-            if (d.imagem) {
-                preview.innerHTML = `<img src="${d.imagem}" alt="${d.nome}">`;
-            } else {
-                preview.innerHTML = `
-                    <div class="placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Clique para selecionar imagem</span>
-                    </div>
-                `;
-            }
-
             document.getElementById('editModal').classList.add('active');
-            document.getElementById('editImageInput').value = '';
         }
 
         function closeEditModal() {
@@ -1234,6 +1018,7 @@
             const id = parseInt(document.getElementById('editId').value);
             const nome = document.getElementById('editNome').value.trim();
             const preco = document.getElementById('editPreco').value.trim();
+            const emoji = document.getElementById('editEmoji').value.trim() || '✈️';
             const parcelas = document.getElementById('editParcelas').value.trim() || '10x';
             const texto = document.getElementById('editTexto').value.trim() || 'Pacote especial';
 
@@ -1242,29 +1027,15 @@
                 return;
             }
 
-            const data = {
-                nome,
-                preco,
-                parcelas,
-                texto
-            };
-
-            // Se nova imagem foi selecionada, usar ela
-            if (editImagemBase64 && editImagemBase64.startsWith('data:image')) {
-                data.imagem = editImagemBase64;
-            } else if (editImagemBase64 === null) {
-                data.imagem = null;
-            }
-
             try {
-                await updateDestino(id, data);
+                await updateDestino(id, { nome, preco, emoji, parcelas, texto });
                 destinos = await fetchDestinos();
                 showToast('✅ Destino atualizado com sucesso!', 'success');
                 closeEditModal();
                 loadPage('destinos');
                 document.getElementById('totalDestinos').textContent = destinos.length;
             } catch (error) {
-                showToast(error.message || 'Erro ao atualizar destino', 'error');
+                showToast('Erro ao atualizar destino', 'error');
             }
         }
 
@@ -1298,13 +1069,13 @@
 
                 console.log('🚀 Admin Vai Voando carregado!');
                 console.log(`📦 ${destinos.length} destinos carregados`);
-                console.log('💡 Imagens são armazenadas em Base64 no Neon');
             } catch (error) {
                 console.error('❌ Erro na inicialização:', error);
                 showToast('Erro ao carregar o painel', 'error');
             }
         }
 
+        // Iniciar
         init();
     </script>
 </body>
