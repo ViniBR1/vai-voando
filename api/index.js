@@ -1,11 +1,13 @@
+// api/index.js - VERSÃO SIMPLIFICADA E GARANTIDA
+
 export default async function handler(req, res) {
-    // Configurar CORS
+    // Configurar CORS - SEMPRE RESPONDER PRIMEIRO
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-    // Responder OPTIONS
+    // Responder OPTIONS imediatamente
     if (req.method === 'OPTIONS') {
         res.status(200).end();
         return;
@@ -20,62 +22,86 @@ export default async function handler(req, res) {
     // ROTA: /api/login (POST)
     // ============================================================
     if (path === '/api/login') {
+        // VERIFICAR SE É POST
         if (req.method !== 'POST') {
-            return res.status(405).json({ error: 'Método não permitido. Use POST.' });
+            console.log('❌ Método não é POST:', req.method);
+            return res.status(405).json({ 
+                error: 'Método não permitido. Use POST.',
+                method: req.method 
+            });
         }
 
         try {
-            // Ler o body
-            let body = '';
-            req.on('data', chunk => body += chunk);
-            req.on('end', () => {
-                try {
-                    const data = JSON.parse(body);
-                    console.log('📦 Body recebido:', data);
+            // LER O BODY
+            const buffers = [];
+            for await (const chunk of req) {
+                buffers.push(chunk);
+            }
+            const bodyString = Buffer.concat(buffers).toString();
+            
+            console.log('📦 Body recebido (raw):', bodyString);
+            
+            let data;
+            try {
+                data = JSON.parse(bodyString);
+            } catch (e) {
+                console.error('❌ Erro ao parsear JSON:', e);
+                return res.status(400).json({ error: 'Body inválido. Envie JSON válido.' });
+            }
 
-                    const { username, password, role } = data;
+            const { username, password, role } = data;
+            console.log('📦 Dados:', { username, password, role });
 
-                    if (!username || !password) {
-                        return res.status(400).json({ error: 'Usuário e senha são obrigatórios' });
+            if (!username || !password) {
+                return res.status(400).json({ error: 'Usuário e senha são obrigatórios' });
+            }
+
+            // LOGIN DEMO - CLIENTE
+            if (username === 'cliente' && password === '123456' && role === 'cliente') {
+                console.log('✅ Login CLIENTE realizado com sucesso');
+                return res.status(200).json({
+                    success: true,
+                    user: { 
+                        name: 'Cliente', 
+                        role: 'cliente', 
+                        id: 1 
                     }
+                });
+            }
 
-                    // LOGIN DEMO
-                    if (username === 'cliente' && password === '123456' && role === 'cliente') {
-                        console.log('✅ Login cliente realizado com sucesso');
-                        return res.status(200).json({
-                            success: true,
-                            user: { name: 'Cliente', role: 'cliente', id: 1 }
-                        });
+            // LOGIN DEMO - ADMIN
+            if (username === 'adm' && password === '123456' && role === 'admin') {
+                console.log('✅ Login ADMIN realizado com sucesso');
+                return res.status(200).json({
+                    success: true,
+                    user: { 
+                        name: 'Administrador', 
+                        role: 'admin', 
+                        id: 2 
                     }
+                });
+            }
 
-                    if (username === 'adm' && password === '123456' && role === 'admin') {
-                        console.log('✅ Login admin realizado com sucesso');
-                        return res.status(200).json({
-                            success: true,
-                            user: { name: 'Administrador', role: 'admin', id: 2 }
-                        });
-                    }
-
-                    console.log('❌ Credenciais inválidas');
-                    return res.status(401).json({ error: 'Credenciais inválidas' });
-
-                } catch (error) {
-                    console.error('❌ Erro ao parsear body:', error);
-                    return res.status(400).json({ error: 'Body inválido' });
-                }
+            console.log('❌ Credenciais inválidas');
+            return res.status(401).json({ 
+                error: 'Credenciais inválidas',
+                hint: 'Use cliente/123456 ou adm/123456'
             });
+
         } catch (error) {
             console.error('❌ Erro no login:', error);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(500).json({ 
+                error: 'Erro interno do servidor',
+                details: error.message 
+            });
         }
-        return;
     }
 
     // ============================================================
     // ROTA: /api/destinos (GET)
     // ============================================================
     if (path === '/api/destinos' && req.method === 'GET') {
-        // Dados de exemplo (fallback)
+        // DADOS DE EXEMPLO
         const destinos = [
             { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", emoji: "🏖️", parcelas: "10x",
                 texto: "Hotel Vilarejo Praia · All Inclusive", whats: "5521991864436" },
@@ -94,7 +120,48 @@ export default async function handler(req, res) {
     }
 
     // ============================================================
+    // ROTA: /api/destinos (POST - ADICIONAR)
+    // ============================================================
+    if (path === '/api/destinos' && req.method === 'POST') {
+        try {
+            const buffers = [];
+            for await (const chunk of req) {
+                buffers.push(chunk);
+            }
+            const bodyString = Buffer.concat(buffers).toString();
+            const data = JSON.parse(bodyString);
+            
+            const { nome, preco, emoji, parcelas, texto, whats } = data;
+
+            if (!nome || !preco) {
+                return res.status(400).json({ error: 'Nome e preço são obrigatórios' });
+            }
+
+            // Simular adição (em memória)
+            const novoDestino = {
+                id: Date.now(),
+                nome,
+                preco,
+                emoji: emoji || '✈️',
+                parcelas: parcelas || '10x',
+                texto: texto || 'Pacote especial',
+                whats: whats || '5521991864436'
+            };
+
+            return res.status(201).json(novoDestino);
+        } catch (error) {
+            console.error('❌ Erro ao adicionar destino:', error);
+            return res.status(500).json({ error: 'Erro ao adicionar destino' });
+        }
+    }
+
+    // ============================================================
     // ROTA NÃO ENCONTRADA
     // ============================================================
-    return res.status(404).json({ error: 'Rota não encontrada' });
+    console.log('❌ Rota não encontrada:', path);
+    return res.status(404).json({ 
+        error: 'Rota não encontrada',
+        path: path,
+        method: req.method
+    });
 }
