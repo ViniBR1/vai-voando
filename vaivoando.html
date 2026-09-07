@@ -1175,7 +1175,7 @@
         }
 
         // ============================================================
-        // SISTEMA DE LOGIN
+        // SISTEMA DE LOGIN COM REDIRECIONAMENTO
         // ============================================================
         loginTrigger.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1199,6 +1199,7 @@
             if (e.target === loginModal) closeModal();
         });
 
+        // ===== BOTÃO DE LOGIN COM REDIRECIONAMENTO =====
         loginBtn.addEventListener('click', async () => {
             const user = loginUser.value.trim();
             const pass = loginPass.value.trim();
@@ -1215,26 +1216,21 @@
 
                 if (result.success) {
                     currentUser = result.user;
-                    userNameDisplay.textContent = currentUser.name;
-                    roleBadge.textContent = currentUser.role === 'admin' ? 'Admin' : 'Cliente';
-                    userDisplay.style.display = 'flex';
-                    loginTrigger.style.display = 'none';
-
+                    
+                    // SALVAR NA SESSÃO E REDIRECIONAR
                     if (currentUser.role === 'admin') {
-                        adminPanel.style.display = 'block';
-                        document.getElementById('badgePromo').innerHTML =
-                            '<i class="fas fa-crown"></i> Modo Admin';
-                        renderAdminList();
-                        showToast('✅ Bem-vindo, Administrador!', 'success');
+                        sessionStorage.setItem('adminUser', JSON.stringify(currentUser));
+                        showToast('✅ Redirecionando para o painel admin...', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/admin.html';
+                        }, 500);
                     } else {
-                        adminPanel.style.display = 'none';
-                        document.getElementById('badgePromo').innerHTML =
-                            '<i class="fas fa-calendar-check"></i> 15/06 a 17/06';
-                        showToast(`✅ Bem-vindo, ${currentUser.name}! Agora você pode comprar`, 'success');
+                        sessionStorage.setItem('clienteUser', JSON.stringify(currentUser));
+                        showToast('✅ Redirecionando para sua área...', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/cliente.html';
+                        }, 500);
                     }
-
-                    renderCarousel();
-                    closeModal();
                 }
             } catch (error) {
                 showToast(error.message || '❌ Credenciais inválidas', 'error');
