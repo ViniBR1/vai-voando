@@ -1,15 +1,55 @@
-// api/index.js - VERSÃO SIMPLIFICADA E GARANTIDA
+import { Pool } from 'pg';
 
-export default async function handler(req, res) {
-    // Configurar CORS - SEMPRE RESPONDER PRIMEIRO
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+});
+
+async function query(text, params) {
+    try {
+        const res = await pool.query(text, params);
+        return res;
+    } catch (error) {
+        console.error('Erro na query:', error);
+        throw error;
+    }
+}
+
+function sendResponse(res, statusCode, data) {
+    res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    res.statusCode = statusCode;
+    res.end(JSON.stringify(data));
+}
 
-    // Responder OPTIONS imediatamente
+async function parseBody(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+            try {
+                resolve(body ? JSON.parse(body) : {});
+            } catch (error) {
+                reject(error);
+            }
+        });
+        req.on('error', reject);
+    });
+}
+
+export default async function handler(req, res) {
+    // CORS
     if (req.method === 'OPTIONS') {
-        res.status(200).end();
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        res.statusCode = 200;
+        res.end();
         return;
     }
 
@@ -18,150 +58,163 @@ export default async function handler(req, res) {
 
     console.log(`📌 ${req.method} ${path}`);
 
-    // ============================================================
-    // ROTA: /api/login (POST)
-    // ============================================================
-    if (path === '/api/login') {
-        // VERIFICAR SE É POST
-        if (req.method !== 'POST') {
-            console.log('❌ Método não é POST:', req.method);
-            return res.status(405).json({ 
-                error: 'Método não permitido. Use POST.',
-                method: req.method 
-            });
-        }
-
-        try {
-            // LER O BODY
-            const buffers = [];
-            for await (const chunk of req) {
-                buffers.push(chunk);
+    try {
+        // ============================================================
+        // ROTA: /api/login (POST)
+        // ============================================================
+        if (path === '/api/login') {
+            if (req.method !== 'POST') {
+                return sendResponse(res, 405, { error: 'Método não permitido. Use POST.' });
             }
-            const bodyString = Buffer.concat(buffers).toString();
-            
-            console.log('📦 Body recebido (raw):', bodyString);
-            
-            let data;
+
             try {
-                data = JSON.parse(bodyString);
-            } catch (e) {
-                console.error('❌ Erro ao parsear JSON:', e);
-                return res.status(400).json({ error: 'Body inválido. Envie JSON válido.' });
+                const body = await parseBody(req);
+                const { username, password, role } = body;
+
+                if (!username || !password) {
+                    return sendResponse(res, 400, { error: 'Usuário e senha são obrigatórios' });
+                }
+
+                if (username === 'cliente' && password === '123456' && role === 'cliente') {
+                    return sendResponse(res, 200, {
+                        success: true,
+                        user: { name: 'Cliente', role: 'cliente', id: 1 }
+                    });
+                }
+
+                if (username === 'adm' && password === '123456' && role === 'admin') {
+                    return sendResponse(res, 200, {
+                        success: true,
+                        user: { name: 'Administrador', role: 'admin', id: 2 }
+                    });
+                }
+
+                return sendResponse(res, 401, { error: 'Credenciais inválidas' });
+            } catch (error) {
+                console.error('❌ Erro no login:', error);
+                return sendResponse(res, 500, { error: 'Erro interno do servidor' });
             }
-
-            const { username, password, role } = data;
-            console.log('📦 Dados:', { username, password, role });
-
-            if (!username || !password) {
-                return res.status(400).json({ error: 'Usuário e senha são obrigatórios' });
-            }
-
-            // LOGIN DEMO - CLIENTE
-            if (username === 'cliente' && password === '123456' && role === 'cliente') {
-                console.log('✅ Login CLIENTE realizado com sucesso');
-                return res.status(200).json({
-                    success: true,
-                    user: { 
-                        name: 'Cliente', 
-                        role: 'cliente', 
-                        id: 1 
-                    }
-                });
-            }
-
-            // LOGIN DEMO - ADMIN
-            if (username === 'adm' && password === '123456' && role === 'admin') {
-                console.log('✅ Login ADMIN realizado com sucesso');
-                return res.status(200).json({
-                    success: true,
-                    user: { 
-                        name: 'Administrador', 
-                        role: 'admin', 
-                        id: 2 
-                    }
-                });
-            }
-
-            console.log('❌ Credenciais inválidas');
-            return res.status(401).json({ 
-                error: 'Credenciais inválidas',
-                hint: 'Use cliente/123456 ou adm/123456'
-            });
-
-        } catch (error) {
-            console.error('❌ Erro no login:', error);
-            return res.status(500).json({ 
-                error: 'Erro interno do servidor',
-                details: error.message 
-            });
         }
-    }
 
-    // ============================================================
-    // ROTA: /api/destinos (GET)
-    // ============================================================
-    if (path === '/api/destinos' && req.method === 'GET') {
-        // DADOS DE EXEMPLO
-        const destinos = [
-            { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", emoji: "🏖️", parcelas: "10x",
-                texto: "Hotel Vilarejo Praia · All Inclusive", whats: "5521991864436" },
-            { id: 2, nome: "Búzios", preco: "R$ 219,90", emoji: "⛵", parcelas: "12x",
-                texto: "Pacote Romance · 3 noites", whats: "5521991864436" },
-            { id: 3, nome: "Cabo Frio", preco: "R$ 189,00", emoji: "🌊", parcelas: "10x",
-                texto: "All inclusive + passeios", whats: "5521991864436" },
-            { id: 4, nome: "Angra dos Reis", preco: "R$ 267,50", emoji: "⛰️", parcelas: "12x",
-                texto: "Ilhas e mergulho", whats: "5521991864436" },
-            { id: 5, nome: "Arraial do Cabo", preco: "R$ 204,30", emoji: "🐠", parcelas: "10x",
-                texto: "Pacote familiar", whats: "5521991864436" },
-            { id: 6, nome: "Paraty", preco: "R$ 298,00", emoji: "⛪", parcelas: "12x",
-                texto: "História + praias", whats: "5521991864436" }
-        ];
-        return res.status(200).json(destinos);
-    }
+        // ============================================================
+        // ROTA: /api/destinos (GET)
+        // ============================================================
+        if (path === '/api/destinos' && req.method === 'GET') {
+            try {
+                // Verificar se a tabela existe, se não criar
+                await query(`
+                    CREATE TABLE IF NOT EXISTS destinos (
+                        id SERIAL PRIMARY KEY,
+                        nome VARCHAR(100) NOT NULL,
+                        preco VARCHAR(50) NOT NULL,
+                        imagem TEXT,
+                        parcelas VARCHAR(20) DEFAULT '10x',
+                        texto TEXT DEFAULT 'Pacote especial',
+                        whats VARCHAR(20) DEFAULT '5521991864436',
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                `);
 
-    // ============================================================
-    // ROTA: /api/destinos (POST - ADICIONAR)
-    // ============================================================
-    if (path === '/api/destinos' && req.method === 'POST') {
-        try {
-            const buffers = [];
-            for await (const chunk of req) {
-                buffers.push(chunk);
+                const result = await query('SELECT * FROM destinos ORDER BY id ASC');
+                return sendResponse(res, 200, result.rows);
+            } catch (error) {
+                console.error('❌ Erro ao buscar destinos:', error);
+                return sendResponse(res, 500, { error: 'Erro ao buscar destinos' });
             }
-            const bodyString = Buffer.concat(buffers).toString();
-            const data = JSON.parse(bodyString);
-            
-            const { nome, preco, emoji, parcelas, texto, whats } = data;
-
-            if (!nome || !preco) {
-                return res.status(400).json({ error: 'Nome e preço são obrigatórios' });
-            }
-
-            // Simular adição (em memória)
-            const novoDestino = {
-                id: Date.now(),
-                nome,
-                preco,
-                emoji: emoji || '✈️',
-                parcelas: parcelas || '10x',
-                texto: texto || 'Pacote especial',
-                whats: whats || '5521991864436'
-            };
-
-            return res.status(201).json(novoDestino);
-        } catch (error) {
-            console.error('❌ Erro ao adicionar destino:', error);
-            return res.status(500).json({ error: 'Erro ao adicionar destino' });
         }
-    }
 
-    // ============================================================
-    // ROTA NÃO ENCONTRADA
-    // ============================================================
-    console.log('❌ Rota não encontrada:', path);
-    return res.status(404).json({ 
-        error: 'Rota não encontrada',
-        path: path,
-        method: req.method
-    });
+        // ============================================================
+        // ROTA: /api/destinos (POST - ADICIONAR COM IMAGEM)
+        // ============================================================
+        if (path === '/api/destinos' && req.method === 'POST') {
+            try {
+                const body = await parseBody(req);
+                const { nome, preco, imagem, parcelas, texto, whats } = body;
+
+                if (!nome || !preco) {
+                    return sendResponse(res, 400, { error: 'Nome e preço são obrigatórios' });
+                }
+
+                // Validar imagem Base64 (opcional)
+                let imagemSalva = imagem || null;
+                if (imagem && !imagem.startsWith('data:image')) {
+                    return sendResponse(res, 400, { error: 'Formato de imagem inválido. Use Base64.' });
+                }
+
+                const result = await query(
+                    `INSERT INTO destinos (nome, preco, imagem, parcelas, texto, whats) 
+                     VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+                    [nome, preco, imagemSalva, parcelas || '10x', texto || 'Pacote especial', whats || '5521991864436']
+                );
+
+                return sendResponse(res, 201, result.rows[0]);
+            } catch (error) {
+                console.error('❌ Erro ao adicionar destino:', error);
+                return sendResponse(res, 500, { error: 'Erro ao adicionar destino' });
+            }
+        }
+
+        // ============================================================
+        // ROTA: /api/destinos/:id (DELETE)
+        // ============================================================
+        if (path.startsWith('/api/destinos/')) {
+            const id = path.split('/')[3];
+
+            if (req.method === 'DELETE') {
+                try {
+                    const result = await query('DELETE FROM destinos WHERE id = $1 RETURNING *', [id]);
+                    if (result.rowCount === 0) {
+                        return sendResponse(res, 404, { error: 'Destino não encontrado' });
+                    }
+                    return sendResponse(res, 200, { message: 'Destino removido', id });
+                } catch (error) {
+                    console.error('❌ Erro ao remover destino:', error);
+                    return sendResponse(res, 500, { error: 'Erro ao remover destino' });
+                }
+            }
+
+            // ============================================================
+            // ROTA: /api/destinos/:id (PUT - ATUALIZAR COM IMAGEM)
+            // ============================================================
+            if (req.method === 'PUT') {
+                try {
+                    const body = await parseBody(req);
+                    const { nome, preco, imagem, parcelas, texto, whats } = body;
+
+                    // Validar imagem Base64 se fornecida
+                    if (imagem && !imagem.startsWith('data:image')) {
+                        return sendResponse(res, 400, { error: 'Formato de imagem inválido. Use Base64.' });
+                    }
+
+                    const result = await query(
+                        `UPDATE destinos 
+                         SET nome = COALESCE($1, nome), 
+                             preco = COALESCE($2, preco), 
+                             imagem = COALESCE($3, imagem), 
+                             parcelas = COALESCE($4, parcelas), 
+                             texto = COALESCE($5, texto), 
+                             whats = COALESCE($6, whats) 
+                         WHERE id = $7 RETURNING *`,
+                        [nome, preco, imagem, parcelas, texto, whats, id]
+                    );
+
+                    if (result.rowCount === 0) {
+                        return sendResponse(res, 404, { error: 'Destino não encontrado' });
+                    }
+
+                    return sendResponse(res, 200, result.rows[0]);
+                } catch (error) {
+                    console.error('❌ Erro ao atualizar destino:', error);
+                    return sendResponse(res, 500, { error: 'Erro ao atualizar destino' });
+                }
+            }
+
+            return sendResponse(res, 405, { error: 'Método não permitido' });
+        }
+
+        return sendResponse(res, 404, { error: 'Rota não encontrada' });
+    } catch (error) {
+        console.error('❌ Erro geral:', error);
+        return sendResponse(res, 500, { error: 'Erro interno do servidor' });
+    }
 }

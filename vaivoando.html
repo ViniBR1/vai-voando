@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
@@ -235,7 +235,7 @@
         }
 
         .destino-img {
-            height: 160px;
+            height: 180px;
             background: #dce6f5;
             border-radius: 18px;
             margin-bottom: 1rem;
@@ -243,6 +243,15 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .destino-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 18px;
         }
 
         .destino-img .emoji {
@@ -549,113 +558,6 @@
             color: #6f7f90;
         }
 
-        .admin-panel {
-            margin-top: 1.5rem;
-            border-top: 2px solid #eef3fa;
-            padding-top: 1.5rem;
-        }
-
-        .admin-panel h4 {
-            margin-bottom: 1rem;
-            color: #1a4b63;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .admin-form-row {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
-
-        .admin-form-row input {
-            flex: 1;
-            min-width: 100px;
-            margin-bottom: 0;
-        }
-
-        .admin-form-row .btn-add {
-            background: #f9d56e;
-            color: #0b2a3b;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 60px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
-
-        .admin-form-row .btn-add:hover {
-            background: #f5c842;
-            transform: scale(1.02);
-        }
-
-        .destino-item-admin {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.6rem 0.5rem;
-            border-bottom: 1px solid #eef3fa;
-        }
-
-        .destino-item-admin .info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .destino-item-admin .info .emoji-sm {
-            font-size: 1.3rem;
-        }
-
-        .destino-item-admin .actions {
-            display: flex;
-            gap: 0.3rem;
-        }
-
-        .destino-item-admin .actions button {
-            border: none;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.2s;
-        }
-
-        .destino-item-admin .actions .btn-edit {
-            background: #f9d56e;
-            color: #1e2b3c;
-        }
-
-        .destino-item-admin .actions .btn-edit:hover {
-            background: #f5c842;
-        }
-
-        .destino-item-admin .actions .btn-delete {
-            background: #e02b4a;
-            color: white;
-        }
-
-        .destino-item-admin .actions .btn-delete:hover {
-            background: #b01f3a;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #5f6f80;
-        }
-
-        .empty-message {
-            text-align: center;
-            padding: 1rem;
-            color: #5f6f80;
-        }
-
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -683,6 +585,12 @@
 
         .toast.error {
             background: #e02b4a;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #5f6f80;
         }
 
         @media (max-width: 768px) {
@@ -728,16 +636,6 @@
             }
             .modal-box {
                 padding: 1.5rem;
-            }
-            .admin-form-row {
-                flex-direction: column;
-            }
-            .admin-form-row input {
-                width: 100%;
-            }
-            .admin-form-row .btn-add {
-                width: 100%;
-                text-align: center;
             }
         }
 
@@ -875,21 +773,6 @@
             <p class="demo-info">
                 <i class="fas fa-info-circle"></i> Demo: cliente/123456 · adm/123456
             </p>
-
-            <div id="adminPanel" class="admin-panel" style="display: none;">
-                <h4><i class="fas fa-crown"></i> Gerenciar Destinos</h4>
-
-                <div class="admin-form-row">
-                    <input type="text" id="newDestinoNome" placeholder="Nome do destino">
-                    <input type="text" id="newDestinoPreco" placeholder="Preço (R$)" style="max-width: 120px;">
-                    <input type="text" id="newDestinoEmoji" placeholder="Emoji" style="max-width: 80px;">
-                    <button class="btn-add" id="addDestinoBtn"><i class="fas fa-plus"></i> Adicionar</button>
-                </div>
-
-                <div id="adminDestinosList">
-                    <div class="loading">Carregando...</div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -901,16 +784,10 @@
         // ============================================================
         const API_BASE = '/api';
 
-        // ============================================================
-        // ESTADO
-        // ============================================================
         let destinos = [];
         let currentIndex = 0;
         let currentUser = null;
 
-        // ============================================================
-        // ELEMENTOS DOM
-        // ============================================================
         const track = document.getElementById('carouselTrack');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -924,8 +801,6 @@
         const userNameDisplay = document.getElementById('userNameDisplay');
         const roleBadge = document.getElementById('roleBadge');
         const logoutBtn = document.getElementById('logoutBtn');
-        const adminPanel = document.getElementById('adminPanel');
-        const adminDestinosList = document.getElementById('adminDestinosList');
         const toast = document.getElementById('toast');
 
         // ============================================================
@@ -943,56 +818,8 @@
             }
         }
 
-        async function addDestino(destino) {
-            try {
-                const response = await fetch(`${API_BASE}/destinos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(destino)
-                });
-                if (!response.ok) throw new Error('Erro ao adicionar destino');
-                return await response.json();
-            } catch (error) {
-                console.error('❌ Erro addDestino:', error);
-                showToast('Erro ao adicionar destino', 'error');
-                throw error;
-            }
-        }
-
-        async function deleteDestino(id) {
-            try {
-                const response = await fetch(`${API_BASE}/destinos/${id}`, {
-                    method: 'DELETE'
-                });
-                if (!response.ok) throw new Error('Erro ao remover destino');
-                return true;
-            } catch (error) {
-                console.error('❌ Erro deleteDestino:', error);
-                showToast('Erro ao remover destino', 'error');
-                throw error;
-            }
-        }
-
-        async function updateDestino(id, data) {
-            try {
-                const response = await fetch(`${API_BASE}/destinos/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (!response.ok) throw new Error('Erro ao atualizar destino');
-                return await response.json();
-            } catch (error) {
-                console.error('❌ Erro updateDestino:', error);
-                showToast('Erro ao atualizar destino', 'error');
-                throw error;
-            }
-        }
-
         async function fazerLogin(username, password, role) {
             try {
-                console.log('🔐 Tentando login com:', { username, password, role });
-
                 const response = await fetch(`${API_BASE}/login`, {
                     method: 'POST',
                     headers: {
@@ -1002,8 +829,6 @@
                     body: JSON.stringify({ username, password, role })
                 });
 
-                console.log('📡 Status da resposta:', response.status);
-
                 if (!response.ok) {
                     let errorMessage = 'Credenciais inválidas';
                     try {
@@ -1011,25 +836,12 @@
                         errorMessage = errorData.error || errorMessage;
                     } catch (e) {
                         const text = await response.text();
-                        console.error('Resposta não é JSON:', text);
                         errorMessage = `Erro ${response.status}: ${text || 'Erro desconhecido'}`;
                     }
                     throw new Error(errorMessage);
                 }
 
-                let data;
-                try {
-                    data = await response.json();
-                } catch (e) {
-                    console.error('❌ Erro ao parsear JSON:', e);
-                    const text = await response.text();
-                    console.error('Resposta recebida:', text);
-                    throw new Error('Resposta do servidor inválida');
-                }
-
-                console.log('✅ Login bem-sucedido:', data);
-                return data;
-
+                return await response.json();
             } catch (error) {
                 console.error('❌ Erro login:', error);
                 throw error;
@@ -1037,27 +849,27 @@
         }
 
         // ============================================================
-        // DADOS PADRÃO (FALLBACK)
+        // DADOS PADRÃO
         // ============================================================
         function getDefaultDestinos() {
             return [
-                { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", emoji: "🏖️", parcelas: "10x",
+                { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", imagem: null, emoji: "🏖️", parcelas: "10x",
                     texto: "Hotel Vilarejo Praia · All Inclusive", whats: "5521991864436" },
-                { id: 2, nome: "Búzios", preco: "R$ 219,90", emoji: "⛵", parcelas: "12x",
+                { id: 2, nome: "Búzios", preco: "R$ 219,90", imagem: null, emoji: "⛵", parcelas: "12x",
                     texto: "Pacote Romance · 3 noites", whats: "5521991864436" },
-                { id: 3, nome: "Cabo Frio", preco: "R$ 189,00", emoji: "🌊", parcelas: "10x",
+                { id: 3, nome: "Cabo Frio", preco: "R$ 189,00", imagem: null, emoji: "🌊", parcelas: "10x",
                     texto: "All inclusive + passeios", whats: "5521991864436" },
-                { id: 4, nome: "Angra dos Reis", preco: "R$ 267,50", emoji: "⛰️", parcelas: "12x",
+                { id: 4, nome: "Angra dos Reis", preco: "R$ 267,50", imagem: null, emoji: "⛰️", parcelas: "12x",
                     texto: "Ilhas e mergulho", whats: "5521991864436" },
-                { id: 5, nome: "Arraial do Cabo", preco: "R$ 204,30", emoji: "🐠", parcelas: "10x",
+                { id: 5, nome: "Arraial do Cabo", preco: "R$ 204,30", imagem: null, emoji: "🐠", parcelas: "10x",
                     texto: "Pacote familiar", whats: "5521991864436" },
-                { id: 6, nome: "Paraty", preco: "R$ 298,00", emoji: "⛪", parcelas: "12x",
+                { id: 6, nome: "Paraty", preco: "R$ 298,00", imagem: null, emoji: "⛪", parcelas: "12x",
                     texto: "História + praias", whats: "5521991864436" }
             ];
         }
 
         // ============================================================
-        // RENDERIZAÇÃO DO CARROSSEL
+        // RENDERIZAR CARROSSEL (COM SUPORTE A IMAGEM)
         // ============================================================
         function renderCarousel() {
             track.innerHTML = '';
@@ -1101,10 +913,22 @@
                     `;
                 }
 
-                card.innerHTML = `
-                    <div class="destino-img" style="background: #dce6f5;">
+                // Verificar se tem imagem
+                let imagemHtml = '';
+                if (d.imagem && d.imagem.startsWith('data:image')) {
+                    imagemHtml = `
+                        <img src="${d.imagem}" alt="${d.nome}">
+                    `;
+                } else {
+                    imagemHtml = `
                         <span class="emoji">${d.emoji || '✈️'}</span>
                         <span class="nome-destino">${d.nome}</span>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="destino-img">
+                        ${imagemHtml}
                     </div>
                     <div class="destino-info">
                         <h4>${d.nome}</h4>
@@ -1121,13 +945,10 @@
 
         function updateCarousel() {
             if (!track.firstChild || track.children.length === 0) return;
-
             const firstCard = track.firstChild;
             const cardWidth = firstCard.offsetWidth + 28;
-
             const maxIndex = Math.max(0, destinos.length - 1);
             if (currentIndex > maxIndex) currentIndex = maxIndex;
-
             track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
         }
 
@@ -1154,20 +975,17 @@
         });
 
         // ============================================================
-        // TOAST (NOTIFICAÇÕES)
+        // TOAST
         // ============================================================
         let toastTimeout = null;
 
         function showToast(message, type = 'info', duration = 3000) {
             toast.textContent = message;
             toast.className = 'toast';
-
             if (type === 'success') toast.classList.add('success');
             if (type === 'error') toast.classList.add('error');
-
             void toast.offsetWidth;
             toast.classList.add('show');
-
             clearTimeout(toastTimeout);
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('show');
@@ -1175,7 +993,7 @@
         }
 
         // ============================================================
-        // SISTEMA DE LOGIN COM REDIRECIONAMENTO
+        // LOGIN
         // ============================================================
         loginTrigger.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1194,12 +1012,10 @@
         }
 
         closeModalBtn.addEventListener('click', closeModal);
-
         loginModal.addEventListener('click', (e) => {
             if (e.target === loginModal) closeModal();
         });
 
-        // ===== BOTÃO DE LOGIN COM REDIRECIONAMENTO =====
         loginBtn.addEventListener('click', async () => {
             const user = loginUser.value.trim();
             const pass = loginPass.value.trim();
@@ -1216,21 +1032,21 @@
 
                 if (result.success) {
                     currentUser = result.user;
-                    
-                    // SALVAR NA SESSÃO E REDIRECIONAR
+                    userNameDisplay.textContent = currentUser.name;
+                    roleBadge.textContent = currentUser.role === 'admin' ? 'Admin' : 'Cliente';
+                    userDisplay.style.display = 'flex';
+                    loginTrigger.style.display = 'none';
+
+                    // Redirecionar para área específica
                     if (currentUser.role === 'admin') {
                         sessionStorage.setItem('adminUser', JSON.stringify(currentUser));
-                        showToast('✅ Redirecionando para o painel admin...', 'success');
-                        setTimeout(() => {
-                            window.location.href = '/admin.html';
-                        }, 500);
+                        window.location.href = '/admin.html';
                     } else {
                         sessionStorage.setItem('clienteUser', JSON.stringify(currentUser));
-                        showToast('✅ Redirecionando para sua área...', 'success');
-                        setTimeout(() => {
-                            window.location.href = '/cliente.html';
-                        }, 500);
+                        window.location.href = '/cliente.html';
                     }
+
+                    closeModal();
                 }
             } catch (error) {
                 showToast(error.message || '❌ Credenciais inválidas', 'error');
@@ -1241,7 +1057,6 @@
             currentUser = null;
             userDisplay.style.display = 'none';
             loginTrigger.style.display = 'inline-flex';
-            adminPanel.style.display = 'none';
             document.getElementById('badgePromo').innerHTML =
                 '<i class="fas fa-calendar-check"></i> 15/06 a 17/06';
             showToast('👋 Você saiu da sua conta', 'info');
@@ -1253,151 +1068,6 @@
         });
         loginUser.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') loginBtn.click();
-        });
-
-        // ============================================================
-        // ADMIN: LISTAR, ADICIONAR, EDITAR, REMOVER
-        // ============================================================
-        function renderAdminList() {
-            if (!adminDestinosList) return;
-
-            if (!destinos || destinos.length === 0) {
-                adminDestinosList.innerHTML = `
-                    <div class="empty-message">
-                        <i class="fas fa-info-circle"></i> Nenhum destino cadastrado
-                    </div>
-                `;
-                return;
-            }
-
-            adminDestinosList.innerHTML = '';
-            destinos.forEach(d => {
-                const div = document.createElement('div');
-                div.className = 'destino-item-admin';
-                div.innerHTML = `
-                    <div class="info">
-                        <span class="emoji-sm">${d.emoji || '✈️'}</span>
-                        <strong>${d.nome}</strong>
-                        <span style="color: #5f6f80;">${d.preco}</span>
-                    </div>
-                    <div class="actions">
-                        <button class="btn-edit" onclick="editarDestino(${d.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-delete" onclick="removerDestino(${d.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                adminDestinosList.appendChild(div);
-            });
-        }
-
-        window.removerDestino = async function(id) {
-            if (!confirm('⚠️ Tem certeza que deseja remover este destino?')) return;
-
-            try {
-                await deleteDestino(id);
-                destinos = await fetchDestinos();
-                renderCarousel();
-                if (currentUser && currentUser.role === 'admin') {
-                    renderAdminList();
-                }
-                showToast('🗑️ Destino removido com sucesso!', 'success');
-            } catch (error) {
-                showToast('Erro ao remover destino', 'error');
-            }
-        };
-
-        window.editarDestino = async function(id) {
-            const d = destinos.find(item => item.id === id);
-            if (!d) {
-                showToast('Destino não encontrado', 'error');
-                return;
-            }
-
-            const novoNome = prompt('✏️ Novo nome:', d.nome);
-            if (novoNome === null) return;
-            if (novoNome.trim()) d.nome = novoNome.trim();
-
-            const novoPreco = prompt('✏️ Novo preço:', d.preco);
-            if (novoPreco === null) return;
-            if (novoPreco.trim()) d.preco = novoPreco.trim();
-
-            const novoEmoji = prompt('✏️ Novo emoji (ex: 🏖️):', d.emoji || '✈️');
-            if (novoEmoji === null) return;
-            if (novoEmoji.trim()) d.emoji = novoEmoji.trim();
-
-            const novoTexto = prompt('✏️ Nova descrição:', d.texto || 'Pacote especial');
-            if (novoTexto === null) return;
-            if (novoTexto.trim()) d.texto = novoTexto.trim();
-
-            try {
-                await updateDestino(id, {
-                    nome: d.nome,
-                    preco: d.preco,
-                    emoji: d.emoji,
-                    texto: d.texto
-                });
-                destinos = await fetchDestinos();
-                renderCarousel();
-                if (currentUser && currentUser.role === 'admin') {
-                    renderAdminList();
-                }
-                showToast('✅ Destino atualizado com sucesso!', 'success');
-            } catch (error) {
-                showToast('Erro ao atualizar destino', 'error');
-            }
-        };
-
-        document.getElementById('addDestinoBtn')?.addEventListener('click', async () => {
-            const nome = document.getElementById('newDestinoNome').value.trim();
-            const preco = document.getElementById('newDestinoPreco').value.trim();
-            const emoji = document.getElementById('newDestinoEmoji').value.trim() || '✈️';
-
-            if (!nome || !preco) {
-                showToast('⚠️ Preencha nome e preço', 'error');
-                return;
-            }
-
-            if (destinos.some(d => d.nome.toLowerCase() === nome.toLowerCase())) {
-                showToast('⚠️ Este destino já existe!', 'error');
-                return;
-            }
-
-            const novoDestino = {
-                nome,
-                preco,
-                emoji,
-                parcelas: '10x',
-                texto: 'Pacote especial',
-                whats: '5521991864436'
-            };
-
-            try {
-                await addDestino(novoDestino);
-                destinos = await fetchDestinos();
-                renderCarousel();
-                if (currentUser && currentUser.role === 'admin') {
-                    renderAdminList();
-                }
-                document.getElementById('newDestinoNome').value = '';
-                document.getElementById('newDestinoPreco').value = '';
-                document.getElementById('newDestinoEmoji').value = '';
-                showToast('✅ Destino adicionado com sucesso!', 'success');
-            } catch (error) {
-                showToast('Erro ao adicionar destino', 'error');
-            }
-        });
-
-        document.getElementById('newDestinoNome')?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') document.getElementById('addDestinoBtn').click();
-        });
-        document.getElementById('newDestinoPreco')?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') document.getElementById('addDestinoBtn').click();
-        });
-        document.getElementById('newDestinoEmoji')?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') document.getElementById('addDestinoBtn').click();
         });
 
         // ============================================================
@@ -1420,9 +1090,6 @@
 
         init();
 
-        // ============================================================
-        // KEYBOARD SHORTCUTS
-        // ============================================================
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && loginModal.classList.contains('active')) {
                 closeModal();
