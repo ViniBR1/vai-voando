@@ -18,6 +18,7 @@
             min-height: 100vh;
         }
 
+        /* ===== HEADER ===== */
         .header {
             background: linear-gradient(145deg, #0b2a3b, #1a4b63);
             color: white;
@@ -81,12 +82,14 @@
             background: rgba(255,255,255,0.25);
         }
 
+        /* ===== CONTAINER ===== */
         .container {
             max-width: 1300px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
 
+        /* ===== BEM-VINDO ===== */
         .welcome-banner {
             background: linear-gradient(135deg, #1a4b63, #0b2a3b);
             color: white;
@@ -115,6 +118,7 @@
             font-weight: 600;
         }
 
+        /* ===== ESTATÍSTICAS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -147,6 +151,7 @@
             margin-bottom: 0.5rem;
         }
 
+        /* ===== DESTINOS ===== */
         .section-title {
             display: flex;
             justify-content: space-between;
@@ -184,6 +189,7 @@
             outline: none;
         }
 
+        /* ===== GRID DE DESTINOS ===== */
         .destinos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -204,7 +210,7 @@
         }
 
         .destino-card .card-img {
-            height: 200px;
+            height: 180px;
             background: #dce6f5;
             display: flex;
             flex-direction: column;
@@ -212,13 +218,6 @@
             justify-content: center;
             font-size: 4rem;
             position: relative;
-            overflow: hidden;
-        }
-
-        .destino-card .card-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
         .destino-card .card-img .tag {
@@ -284,6 +283,7 @@
             transform: scale(1.02);
         }
 
+        /* ===== MEUS PEDIDOS ===== */
         .pedidos-section {
             margin-top: 3rem;
         }
@@ -363,6 +363,7 @@
             color: #dce6f5;
         }
 
+        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -392,12 +393,7 @@
             background: #e02b4a;
         }
 
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #5f6f80;
-        }
-
+        /* ===== RESPONSIVO ===== */
         @media (max-width: 768px) {
             .header {
                 padding: 0.8rem 1rem;
@@ -454,6 +450,7 @@
 </head>
 <body>
 
+    <!-- ===== HEADER ===== -->
     <header class="header">
         <div class="logo">
             <i class="fas fa-plane-departure"></i>
@@ -471,8 +468,10 @@
         </div>
     </header>
 
+    <!-- ===== CONTAINER ===== -->
     <div class="container">
 
+        <!-- ===== WELCOME ===== -->
         <div class="welcome-banner">
             <div>
                 <h1>Olá, <span id="welcomeName">Cliente</span>! 👋</h1>
@@ -483,6 +482,7 @@
             </div>
         </div>
 
+        <!-- ===== ESTATÍSTICAS ===== -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="icon">🏝️</div>
@@ -501,6 +501,7 @@
             </div>
         </div>
 
+        <!-- ===== DESTINOS ===== -->
         <div class="section-title">
             <h2><i class="fas fa-umbrella-beach"></i> Destinos em Alta</h2>
             <div class="filtros">
@@ -509,9 +510,12 @@
         </div>
 
         <div class="destinos-grid" id="destinosGrid">
-            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando destinos...</div>
+            <div class="loading" style="text-align:center; padding:2rem; color:#5f6f80; grid-column:1/-1;">
+                <i class="fas fa-spinner fa-spin"></i> Carregando destinos...
+            </div>
         </div>
 
+        <!-- ===== MEUS PEDIDOS ===== -->
         <div class="pedidos-section">
             <div class="section-title">
                 <h2><i class="fas fa-shopping-bag"></i> Meus Pedidos</h2>
@@ -526,14 +530,21 @@
         </div>
     </div>
 
+    <!-- ===== TOAST ===== -->
     <div id="toast" class="toast"></div>
 
     <script>
+        // ============================================================
+        // CONFIGURAÇÃO
+        // ============================================================
         const API_BASE = '/api';
         let destinos = [];
         let currentUser = null;
         let pedidos = [];
 
+        // ============================================================
+        // VERIFICAR LOGIN
+        // ============================================================
         function checkAuth() {
             const user = JSON.parse(sessionStorage.getItem('clienteUser') || 'null');
             if (!user || user.role !== 'cliente') {
@@ -547,11 +558,17 @@
             return true;
         }
 
+        // ============================================================
+        // LOGOUT
+        // ============================================================
         function logout() {
             sessionStorage.removeItem('clienteUser');
             window.location.href = '/vaivoando.html';
         }
 
+        // ============================================================
+        // FUNÇÕES DE API
+        // ============================================================
         async function fetchDestinos() {
             try {
                 const response = await fetch(`${API_BASE}/destinos`);
@@ -564,39 +581,51 @@
             }
         }
 
+        // ============================================================
+        // DADOS PADRÃO
+        // ============================================================
         function getDefaultDestinos() {
             return [
-                { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", imagem: null, emoji: "🏖️", parcelas: "10x",
+                { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", emoji: "🏖️", parcelas: "10x",
                     texto: "Hotel Vilarejo Praia · All Inclusive", whats: "5521991864436" },
-                { id: 2, nome: "Búzios", preco: "R$ 219,90", imagem: null, emoji: "⛵", parcelas: "12x",
+                { id: 2, nome: "Búzios", preco: "R$ 219,90", emoji: "⛵", parcelas: "12x",
                     texto: "Pacote Romance · 3 noites", whats: "5521991864436" },
-                { id: 3, nome: "Cabo Frio", preco: "R$ 189,00", imagem: null, emoji: "🌊", parcelas: "10x",
+                { id: 3, nome: "Cabo Frio", preco: "R$ 189,00", emoji: "🌊", parcelas: "10x",
                     texto: "All inclusive + passeios", whats: "5521991864436" },
-                { id: 4, nome: "Angra dos Reis", preco: "R$ 267,50", imagem: null, emoji: "⛰️", parcelas: "12x",
+                { id: 4, nome: "Angra dos Reis", preco: "R$ 267,50", emoji: "⛰️", parcelas: "12x",
                     texto: "Ilhas e mergulho", whats: "5521991864436" },
-                { id: 5, nome: "Arraial do Cabo", preco: "R$ 204,30", imagem: null, emoji: "🐠", parcelas: "10x",
+                { id: 5, nome: "Arraial do Cabo", preco: "R$ 204,30", emoji: "🐠", parcelas: "10x",
                     texto: "Pacote familiar", whats: "5521991864436" },
-                { id: 6, nome: "Paraty", preco: "R$ 298,00", imagem: null, emoji: "⛪", parcelas: "12x",
+                { id: 6, nome: "Paraty", preco: "R$ 298,00", emoji: "⛪", parcelas: "12x",
                     texto: "História + praias", whats: "5521991864436" }
             ];
         }
 
+        // ============================================================
+        // TOAST
+        // ============================================================
         let toastTimeout = null;
 
         function showToast(message, type = 'info', duration = 3000) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = 'toast';
+
             if (type === 'success') toast.classList.add('success');
             if (type === 'error') toast.classList.add('error');
+
             void toast.offsetWidth;
             toast.classList.add('show');
+
             clearTimeout(toastTimeout);
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('show');
             }, duration);
         }
 
+        // ============================================================
+        // RENDERIZAR DESTINOS
+        // ============================================================
         function renderDestinos(destinosFiltrados = null) {
             const grid = document.getElementById('destinosGrid');
             const lista = destinosFiltrados || destinos;
@@ -613,11 +642,8 @@
 
             grid.innerHTML = lista.map(d => `
                 <div class="destino-card" data-nome="${d.nome.toLowerCase()}">
-                    <div class="card-img">
-                        ${d.imagem && d.imagem.startsWith('data:image') ? 
-                            `<img src="${d.imagem}" alt="${d.nome}">` :
-                            `<span style="font-size:4rem;">${d.emoji || '✈️'}</span>`
-                        }
+                    <div class="card-img" style="background: #dce6f5;">
+                        <span style="font-size:4rem;">${d.emoji || '✈️'}</span>
                         <span class="tag">Destaque</span>
                     </div>
                     <div class="card-body">
@@ -632,9 +658,13 @@
                 </div>
             `).join('');
 
+            // Atualizar contador
             document.getElementById('totalDestinos').textContent = lista.length;
         }
 
+        // ============================================================
+        // FILTRAR DESTINOS
+        // ============================================================
         function filtrarDestinos() {
             const termo = document.getElementById('searchInput').value.toLowerCase().trim();
             if (!termo) {
@@ -648,7 +678,11 @@
             renderDestinos(filtrados);
         }
 
+        // ============================================================
+        // PEDIDOS SIMULADOS
+        // ============================================================
         function carregarPedidos() {
+            // Simular pedidos do cliente
             const pedidosSalvos = JSON.parse(localStorage.getItem('pedidosCliente') || '[]');
             pedidos = pedidosSalvos;
 
@@ -685,6 +719,9 @@
             document.getElementById('totalPedidos').textContent = pedidos.length;
         }
 
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
         async function init() {
             if (!checkAuth()) return;
 
@@ -692,9 +729,13 @@
                 destinos = await fetchDestinos();
                 renderDestinos();
                 carregarPedidos();
+
+                // Favoritos (simulado)
                 document.getElementById('totalFavoritos').textContent = '❤️';
+
                 console.log('🚀 Área do Cliente carregada!');
                 console.log(`📦 ${destinos.length} destinos disponíveis`);
+                console.log(`📦 ${pedidos.length} pedidos`);
             } catch (error) {
                 console.error('❌ Erro na inicialização:', error);
                 showToast('Erro ao carregar a área do cliente', 'error');
