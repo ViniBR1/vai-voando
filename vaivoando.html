@@ -896,12 +896,21 @@
     <div id="toast" class="toast"></div>
 
     <script>
+        // ============================================================
+        // CONFIGURAÇÃO
+        // ============================================================
         const API_BASE = '/api';
 
+        // ============================================================
+        // ESTADO
+        // ============================================================
         let destinos = [];
         let currentIndex = 0;
         let currentUser = null;
 
+        // ============================================================
+        // ELEMENTOS DOM
+        // ============================================================
         const track = document.getElementById('carouselTrack');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -919,6 +928,9 @@
         const adminDestinosList = document.getElementById('adminDestinosList');
         const toast = document.getElementById('toast');
 
+        // ============================================================
+        // FUNÇÕES DE API
+        // ============================================================
         async function fetchDestinos() {
             try {
                 const response = await fetch(`${API_BASE}/destinos`);
@@ -979,24 +991,54 @@
 
         async function fazerLogin(username, password, role) {
             try {
+                console.log('🔐 Tentando login com:', { username, password, role });
+
                 const response = await fetch(`${API_BASE}/login`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ username, password, role })
                 });
 
+                console.log('📡 Status da resposta:', response.status);
+
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Credenciais inválidas');
+                    let errorMessage = 'Credenciais inválidas';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorMessage;
+                    } catch (e) {
+                        const text = await response.text();
+                        console.error('Resposta não é JSON:', text);
+                        errorMessage = `Erro ${response.status}: ${text || 'Erro desconhecido'}`;
+                    }
+                    throw new Error(errorMessage);
                 }
 
-                return await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    console.error('❌ Erro ao parsear JSON:', e);
+                    const text = await response.text();
+                    console.error('Resposta recebida:', text);
+                    throw new Error('Resposta do servidor inválida');
+                }
+
+                console.log('✅ Login bem-sucedido:', data);
+                return data;
+
             } catch (error) {
                 console.error('❌ Erro login:', error);
                 throw error;
             }
         }
 
+        // ============================================================
+        // DADOS PADRÃO (FALLBACK)
+        // ============================================================
         function getDefaultDestinos() {
             return [
                 { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", emoji: "🏖️", parcelas: "10x",
@@ -1014,6 +1056,9 @@
             ];
         }
 
+        // ============================================================
+        // RENDERIZAÇÃO DO CARROSSEL
+        // ============================================================
         function renderCarousel() {
             track.innerHTML = '';
 
@@ -1086,6 +1131,9 @@
             track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
         }
 
+        // ============================================================
+        // CONTROLES DO CARROSSEL
+        // ============================================================
         prevBtn.addEventListener('click', () => {
             if (currentIndex > 0) {
                 currentIndex--;
@@ -1105,6 +1153,9 @@
             if (destinos.length > 0) updateCarousel();
         });
 
+        // ============================================================
+        // TOAST (NOTIFICAÇÕES)
+        // ============================================================
         let toastTimeout = null;
 
         function showToast(message, type = 'info', duration = 3000) {
@@ -1123,6 +1174,9 @@
             }, duration);
         }
 
+        // ============================================================
+        // SISTEMA DE LOGIN
+        // ============================================================
         loginTrigger.addEventListener('click', (e) => {
             e.preventDefault();
             if (currentUser) {
@@ -1205,6 +1259,9 @@
             if (e.key === 'Enter') loginBtn.click();
         });
 
+        // ============================================================
+        // ADMIN: LISTAR, ADICIONAR, EDITAR, REMOVER
+        // ============================================================
         function renderAdminList() {
             if (!adminDestinosList) return;
 
@@ -1347,6 +1404,9 @@
             if (e.key === 'Enter') document.getElementById('addDestinoBtn').click();
         });
 
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
         async function init() {
             try {
                 destinos = await fetchDestinos();
@@ -1364,6 +1424,9 @@
 
         init();
 
+        // ============================================================
+        // KEYBOARD SHORTCUTS
+        // ============================================================
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && loginModal.classList.contains('active')) {
                 closeModal();
