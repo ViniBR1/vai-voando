@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta · Vai Voando</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(145deg, #0b2a3b, #1a4b63);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header .logo i {
+            color: #f9d56e;
+        }
+
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header .user-info .avatar {
+            background: #f9d56e;
+            color: #0b2a3b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .header .user-info .name {
+            font-weight: 500;
+        }
+
+        .header .user-info .btn-sair {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .header .user-info .btn-sair:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* ===== BEM-VINDO ===== */
+        .welcome-banner {
+            background: linear-gradient(135deg, #1a4b63, #0b2a3b);
+            color: white;
+            border-radius: 24px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-banner h1 {
+            font-size: 2rem;
+        }
+
+        .welcome-banner h1 span {
+            color: #f9d56e;
+        }
+
+        .welcome-banner .badge {
+            background: #f9d56e;
+            color: #0b2a3b;
+            padding: 0.3rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+
+        /* ===== ESTATÍSTICAS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a4b63;
+        }
+
+        .stat-card .label {
+            color: #5f6f80;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== DESTINOS ===== */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            color: #0b2a3b;
+        }
+
+        .section-title h2 i {
+            color: #f9d56e;
+        }
+
+        .section-title .filtros {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .section-title .filtros input {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2eaf3;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
+
+        .section-title .filtros input:focus {
+            border-color: #1a4b63;
+            outline: none;
+        }
+
+        /* ===== GRID DE DESTINOS ===== */
+        .destinos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .destino-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: 0.3s;
+        }
+
+        .destino-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        .destino-card .card-img {
+            height: 180px;
+            background: #dce6f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .destino-card .card-img .tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #e02b4a;
+            color: white;
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .destino-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .destino-card .card-body h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .destino-card .card-body .descricao {
+            color: #5f6f80;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .destino-card .card-body .preco {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a4b63;
+            margin: 0.5rem 0;
+        }
+
+        .destino-card .card-body .preco small {
+            font-weight: 400;
+            font-size: 0.9rem;
+            color: #5f6f80;
+        }
+
+        .destino-card .card-body .btn-comprar {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 0.7rem;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        .destino-card .card-body .btn-comprar:hover {
+            background: #1da851;
+            transform: scale(1.02);
+        }
+
+        /* ===== MEUS PEDIDOS ===== */
+        .pedidos-section {
+            margin-top: 3rem;
+        }
+
+        .pedidos-section .pedido-item {
+            background: white;
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #f9d56e;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .pedidos-section .pedido-item .info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .pedidos-section .pedido-item .info .emoji {
+            font-size: 2rem;
+        }
+
+        .pedidos-section .pedido-item .info .detalhes .nome {
+            font-weight: 600;
+        }
+
+        .pedidos-section .pedido-item .info .detalhes .data {
+            font-size: 0.8rem;
+            color: #5f6f80;
+        }
+
+        .pedidos-section .pedido-item .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pedidos-section .pedido-item .status .badge-status {
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-status.confirmado {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-status.pendente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-status.cancelado {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .pedidos-section .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #5f6f80;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .pedidos-section .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dce6f5;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a4b63;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: 0.3s;
+            max-width: 350px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #1da851;
+        }
+
+        .toast.error {
+            background: #e02b4a;
+        }
+
+        /* ===== RESPONSIVO ===== */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.8rem 1rem;
+            }
+            .header .logo {
+                font-size: 1.2rem;
+            }
+            .container {
+                padding: 0 1rem;
+            }
+            .welcome-banner {
+                padding: 1.5rem;
+            }
+            .welcome-banner h1 {
+                font-size: 1.5rem;
+            }
+            .destinos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+                gap: 1rem;
+            }
+            .section-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .section-title .filtros input {
+                min-width: 150px;
+                width: 100%;
+            }
+            .pedidos-section .pedido-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header .user-info .name {
+                display: none;
+            }
+            .destinos-grid {
+                grid-template-columns: 1fr;
+            }
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-plane-departure"></i>
+            <span>Vai Voando</span>
+        </div>
+        <div class="user-info">
+            <div class="avatar" id="userAvatar">👤</div>
+            <span class="name" id="userName">Cliente</span>
+            <button class="btn-sair" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+            <a href="/vaivoando.html" style="color:white; text-decoration:none; margin-left:0.5rem;">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- ===== CONTAINER ===== -->
+    <div class="container">
+
+        <!-- ===== WELCOME ===== -->
+        <div class="welcome-banner">
+            <div>
+                <h1>Olá, <span id="welcomeName">Cliente</span>! 👋</h1>
+                <p style="opacity:0.8; margin-top:0.3rem;">Aqui você encontra os melhores destinos e acompanha seus pedidos.</p>
+            </div>
+            <div>
+                <span class="badge"><i class="fas fa-star"></i> Cliente VIP</span>
+            </div>
+        </div>
+
+        <!-- ===== ESTATÍSTICAS ===== -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">🏝️</div>
+                <div class="number" id="totalDestinos">0</div>
+                <div class="label">Destinos Disponíveis</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🛒</div>
+                <div class="number" id="totalPedidos">0</div>
+                <div class="label">Meus Pedidos</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">❤️</div>
+                <div class="number" id="totalFavoritos">0</div>
+                <div class="label">Favoritos</div>
+            </div>
+        </div>
+
+        <!-- ===== DESTINOS ===== -->
+        <div class="section-title">
+            <h2><i class="fas fa-umbrella-beach"></i> Destinos em Alta</h2>
+            <div class="filtros">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar destino..." oninput="filtrarDestinos()">
+            </div>
+        </div>
+
+        <div class="destinos-grid" id="destinosGrid">
+            <div class="loading" style="text-align:center; padding:2rem; color:#5f6f80; grid-column:1/-1;">
+                <i class="fas fa-spinner fa-spin"></i> Carregando destinos...
+            </div>
+        </div>
+
+        <!-- ===== MEUS PEDIDOS ===== -->
+        <div class="pedidos-section">
+            <div class="section-title">
+                <h2><i class="fas fa-shopping-bag"></i> Meus Pedidos</h2>
+            </div>
+            <div id="pedidosContainer">
+                <div class="empty-state">
+                    <i class="fas fa-shopping-bag"></i>
+                    <p>Você ainda não fez nenhum pedido.</p>
+                    <p style="font-size:0.9rem; margin-top:0.5rem;">Explore os destinos e faça sua primeira compra!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // ============================================================
+        // CONFIGURAÇÃO
+        // ============================================================
+        const API_BASE = '/api';
+        let destinos = [];
+        let currentUser = null;
+        let pedidos = [];
+
+        // ============================================================
+        // VERIFICAR LOGIN
+        // ============================================================
+        function checkAuth() {
+            const user = JSON.parse(sessionStorage.getItem('clienteUser') || 'null');
+            if (!user || user.role !== 'cliente') {
+                window.location.href = '/vaivoando.html';
+                return false;
+            }
+            currentUser = user;
+            document.getElementById('userName').textContent = user.name || 'Cliente';
+            document.getElementById('welcomeName').textContent = user.name || 'Cliente';
+            document.getElementById('userAvatar').textContent = user.name ? user.name.charAt(0).toUpperCase() : '👤';
+            return true;
+        }
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        function logout() {
+            sessionStorage.removeItem('clienteUser');
+            window.location.href = '/vaivoando.html';
+        }
+
+        // ============================================================
+        // FUNÇÕES DE API
+        // ============================================================
+        async function fetchDestinos() {
+            try {
+                const response = await fetch(`${API_BASE}/destinos`);
+                if (!response.ok) throw new Error('Erro ao buscar destinos');
+                return await response.json();
+            } catch (error) {
+                console.error('❌ Erro fetchDestinos:', error);
+                showToast('Erro ao carregar destinos', 'error');
+                return getDefaultDestinos();
+            }
+        }
+
+        // ============================================================
+        // DADOS PADRÃO
+        // ============================================================
+        function getDefaultDestinos() {
+            return [
+                { id: 1, nome: "Rio das Ostras", preco: "R$ 153,18", emoji: "🏖️", parcelas: "10x",
+                    texto: "Hotel Vilarejo Praia · All Inclusive", whats: "5521991864436" },
+                { id: 2, nome: "Búzios", preco: "R$ 219,90", emoji: "⛵", parcelas: "12x",
+                    texto: "Pacote Romance · 3 noites", whats: "5521991864436" },
+                { id: 3, nome: "Cabo Frio", preco: "R$ 189,00", emoji: "🌊", parcelas: "10x",
+                    texto: "All inclusive + passeios", whats: "5521991864436" },
+                { id: 4, nome: "Angra dos Reis", preco: "R$ 267,50", emoji: "⛰️", parcelas: "12x",
+                    texto: "Ilhas e mergulho", whats: "5521991864436" },
+                { id: 5, nome: "Arraial do Cabo", preco: "R$ 204,30", emoji: "🐠", parcelas: "10x",
+                    texto: "Pacote familiar", whats: "5521991864436" },
+                { id: 6, nome: "Paraty", preco: "R$ 298,00", emoji: "⛪", parcelas: "12x",
+                    texto: "História + praias", whats: "5521991864436" }
+            ];
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        let toastTimeout = null;
+
+        function showToast(message, type = 'info', duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast';
+
+            if (type === 'success') toast.classList.add('success');
+            if (type === 'error') toast.classList.add('error');
+
+            void toast.offsetWidth;
+            toast.classList.add('show');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // ============================================================
+        // RENDERIZAR DESTINOS
+        // ============================================================
+        function renderDestinos(destinosFiltrados = null) {
+            const grid = document.getElementById('destinosGrid');
+            const lista = destinosFiltrados || destinos;
+
+            if (!lista || lista.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align:center; padding:3rem; color:#5f6f80; grid-column:1/-1;">
+                        <i class="fas fa-sad-tear" style="font-size:3rem; margin-bottom:1rem;"></i>
+                        <p>Nenhum destino encontrado.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = lista.map(d => `
+                <div class="destino-card" data-nome="${d.nome.toLowerCase()}">
+                    <div class="card-img" style="background: #dce6f5;">
+                        <span style="font-size:4rem;">${d.emoji || '✈️'}</span>
+                        <span class="tag">Destaque</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>${d.nome}</h3>
+                        <p class="descricao">${d.texto || 'Pacote especial'}</p>
+                        <div class="preco">${d.preco} <small>em ${d.parcelas || '10x'}</small></div>
+                        <a href="https://wa.me/${d.whats || '5521991864436'}?text=Olá! Quero comprar o pacote para ${encodeURIComponent(d.nome)}" 
+                           target="_blank" class="btn-comprar">
+                            <i class="fab fa-whatsapp"></i> Comprar agora
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+
+            // Atualizar contador
+            document.getElementById('totalDestinos').textContent = lista.length;
+        }
+
+        // ============================================================
+        // FILTRAR DESTINOS
+        // ============================================================
+        function filtrarDestinos() {
+            const termo = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!termo) {
+                renderDestinos(destinos);
+                return;
+            }
+            const filtrados = destinos.filter(d => 
+                d.nome.toLowerCase().includes(termo) ||
+                (d.texto && d.texto.toLowerCase().includes(termo))
+            );
+            renderDestinos(filtrados);
+        }
+
+        // ============================================================
+        // PEDIDOS SIMULADOS
+        // ============================================================
+        function carregarPedidos() {
+            // Simular pedidos do cliente
+            const pedidosSalvos = JSON.parse(localStorage.getItem('pedidosCliente') || '[]');
+            pedidos = pedidosSalvos;
+
+            const container = document.getElementById('pedidosContainer');
+
+            if (!pedidos || pedidos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-bag"></i>
+                        <p>Você ainda não fez nenhum pedido.</p>
+                        <p style="font-size:0.9rem; margin-top:0.5rem;">Explore os destinos e faça sua primeira compra!</p>
+                    </div>
+                `;
+                document.getElementById('totalPedidos').textContent = '0';
+                return;
+            }
+
+            container.innerHTML = pedidos.map(p => `
+                <div class="pedido-item">
+                    <div class="info">
+                        <span class="emoji">${p.emoji || '✈️'}</span>
+                        <div class="detalhes">
+                            <div class="nome">${p.nome}</div>
+                            <div class="data">${p.data || 'Pedido realizado'}</div>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <span class="badge-status ${p.status || 'confirmado'}">${p.status || 'Confirmado'}</span>
+                        <span style="font-weight:700; color:#1a4b63;">${p.preco}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('totalPedidos').textContent = pedidos.length;
+        }
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        async function init() {
+            if (!checkAuth()) return;
+
+            try {
+                destinos = await fetchDestinos();
+                renderDestinos();
+                carregarPedidos();
+
+                // Favoritos (simulado)
+                document.getElementById('totalFavoritos').textContent = '❤️';
+
+                console.log('🚀 Área do Cliente carregada!');
+                console.log(`📦 ${destinos.length} destinos disponíveis`);
+                console.log(`📦 ${pedidos.length} pedidos`);
+            } catch (error) {
+                console.error('❌ Erro na inicialização:', error);
+                showToast('Erro ao carregar a área do cliente', 'error');
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
