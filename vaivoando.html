@@ -7,6 +7,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ===== RESET E BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +25,7 @@
         .header {
             background: linear-gradient(145deg, #0b2a3b, #1a4b63);
             color: white;
-            padding: 1.5rem 2rem;
+            padding: 1rem 2rem;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -42,9 +43,8 @@
         }
 
         .logo-area h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            letter-spacing: 2px;
         }
 
         .logo-area h1 i {
@@ -58,14 +58,13 @@
             padding: 0.2rem 1.2rem;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
+            font-size: 0.8rem;
         }
 
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 1.8rem;
+            gap: 1rem;
             flex-wrap: wrap;
         }
 
@@ -86,10 +85,11 @@
 
         .btn-outline-light {
             border: 2px solid rgba(255, 255, 255, 0.7);
-            padding: 0.4rem 1.2rem;
+            padding: 0.3rem 1rem;
             border-radius: 40px;
             background: transparent;
             transition: 0.2s;
+            font-size: 0.9rem;
         }
 
         .btn-outline-light:hover {
@@ -99,13 +99,22 @@
 
         .user-status {
             background: #e8f0fe;
-            padding: 0.2rem 1.2rem;
+            padding: 0.2rem 1rem;
             border-radius: 40px;
             color: #0b2a3b;
             font-weight: 600;
             display: none;
             align-items: center;
             gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .user-status .role-badge {
+            background: #f9d56e;
+            padding: 0.1rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
         }
 
         .logout-btn {
@@ -129,7 +138,7 @@
             padding: 0 2rem;
         }
 
-        /* ===== WELCOME CARD ===== */
+        /* ===== WELCOME ===== */
         .welcome-card {
             background: white;
             border-radius: 32px;
@@ -162,6 +171,7 @@
             border-radius: 40px;
             font-weight: 600;
             display: inline-block;
+            font-size: 0.9rem;
         }
 
         /* ===== CARROSSEL ===== */
@@ -199,6 +209,7 @@
             padding: 0.2rem 1.4rem;
             border-radius: 30px;
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .carousel-wrapper {
@@ -218,7 +229,7 @@
             flex: 0 0 auto;
             background: #f8faff;
             border-radius: 24px;
-            padding: 1.2rem 1.2rem 1.8rem;
+            padding: 1.2rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
             border: 1px solid #edf2f9;
             transition: 0.2s;
@@ -238,15 +249,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 1.2rem;
-            background-size: cover;
-            background-position: center;
         }
 
         .destino-img .emoji {
             font-size: 3.5rem;
-            margin-bottom: 0.3rem;
         }
 
         .destino-img .nome-destino {
@@ -255,29 +261,30 @@
             border-radius: 30px;
             font-size: 0.9rem;
             color: #0b2a3b;
+            margin-top: 0.3rem;
         }
 
         .destino-info h4 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 0.2rem;
         }
 
         .destino-info .descricao {
             color: #3a5a72;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 0.3rem;
         }
 
         .destino-info .preco {
             font-weight: 700;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: #0b2a3b;
             margin: 0.4rem 0;
         }
 
         .destino-info .preco small {
             font-weight: 400;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #5f6f80;
         }
 
@@ -285,7 +292,7 @@
             background: #25D366;
             color: white;
             border: none;
-            padding: 0.6rem 1.2rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 40px;
             font-weight: 600;
             display: inline-flex;
@@ -295,11 +302,37 @@
             cursor: pointer;
             transition: 0.2s;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            width: 100%;
+            justify-content: center;
         }
 
         .btn-whats:hover {
             background: #1da851;
+            transform: scale(1.02);
+        }
+
+        .btn-comprar-cliente {
+            background: #1a4b63;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 0.6rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            font-size: 0.9rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-comprar-cliente:hover {
+            background: #0b2a3b;
             transform: scale(1.02);
         }
 
@@ -353,7 +386,7 @@
         }
 
         .service-item i {
-            font-size: 2.2rem;
+            font-size: 2rem;
             color: #1a4b63;
             margin-bottom: 0.2rem;
         }
@@ -361,7 +394,7 @@
         .service-item span {
             display: block;
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         /* ===== FOOTER ===== */
@@ -382,6 +415,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.3rem;
+            font-size: 0.9rem;
         }
 
         .footer-contact .info-endereco i {
@@ -391,8 +425,8 @@
 
         .social-links a {
             color: #1a4b63;
-            font-size: 1.6rem;
-            margin-left: 1.2rem;
+            font-size: 1.5rem;
+            margin-left: 1rem;
             transition: 0.2s;
             text-decoration: none;
         }
@@ -444,8 +478,8 @@
         }
 
         .modal-box h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1.8rem;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -464,9 +498,7 @@
             color: #e02b4a;
         }
 
-        .modal-box input,
-        .modal-box textarea,
-        .modal-box select {
+        .modal-box input {
             width: 100%;
             padding: 0.8rem 1rem;
             margin-bottom: 1rem;
@@ -476,16 +508,9 @@
             transition: 0.2s;
         }
 
-        .modal-box input:focus,
-        .modal-box textarea:focus {
+        .modal-box input:focus {
             border-color: #1a4b63;
             outline: none;
-        }
-
-        .modal-box textarea {
-            border-radius: 20px;
-            min-height: 60px;
-            resize: vertical;
         }
 
         .modal-box .btn-login {
@@ -526,6 +551,13 @@
             padding: 0;
         }
 
+        .modal-box .demo-info {
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
+            text-align: center;
+            color: #6f7f90;
+        }
+
         /* ===== ADMIN PANEL ===== */
         .admin-panel {
             margin-top: 1.5rem;
@@ -536,6 +568,9 @@
         .admin-panel h4 {
             margin-bottom: 1rem;
             color: #1a4b63;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .admin-form-row {
@@ -584,7 +619,7 @@
         }
 
         .destino-item-admin .info .emoji-sm {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .destino-item-admin .actions {
@@ -622,6 +657,12 @@
         .loading {
             text-align: center;
             padding: 2rem;
+            color: #5f6f80;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 1rem;
             color: #5f6f80;
         }
 
@@ -756,7 +797,8 @@
             <span id="userDisplay" class="user-status">
                 <i class="fas fa-check-circle"></i>
                 <span id="userNameDisplay">Cliente</span>
-                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> sair</button>
+                <span class="role-badge" id="roleBadge">Cliente</span>
+                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
             </span>
         </div>
     </header>
@@ -863,13 +905,13 @@
                 <i class="fas fa-sign-in-alt"></i> Entrar
             </button>
 
-            <p style="margin-top: 0.8rem; font-size: 0.8rem; text-align: center; color: #6f7f90;">
+            <p class="demo-info">
                 <i class="fas fa-info-circle"></i> Demo: cliente/123456 · adm/123456
             </p>
 
             <!-- ===== PAINEL ADMIN ===== -->
             <div id="adminPanel" class="admin-panel" style="display: none;">
-                <h4><i class="fas fa-crown"></i> Painel Administrativo</h4>
+                <h4><i class="fas fa-crown"></i> Gerenciar Destinos</h4>
 
                 <div class="admin-form-row">
                     <input type="text" id="newDestinoNome" placeholder="Nome do destino">
@@ -893,18 +935,13 @@
     <!-- ============================================================ -->
     <script>
         // ============================================================
-        // 1. CONFIGURAÇÃO DA API
+        // 1. CONFIGURAÇÃO
         // ============================================================
 
-        // Em produção, use a URL da sua API no Vercel
-        // Ex: https://seu-site.vercel.app/api
         const API_BASE = '/api';
 
-        // Fallback para desenvolvimento local
-        // const API_BASE = 'http://localhost:3000/api';
-
         // ============================================================
-        // 2. ESTADO GLOBAL
+        // 2. ESTADO
         // ============================================================
 
         let destinos = [];
@@ -926,24 +963,24 @@
         const loginPass = document.getElementById('loginPass');
         const userDisplay = document.getElementById('userDisplay');
         const userNameDisplay = document.getElementById('userNameDisplay');
+        const roleBadge = document.getElementById('roleBadge');
         const logoutBtn = document.getElementById('logoutBtn');
         const adminPanel = document.getElementById('adminPanel');
         const adminDestinosList = document.getElementById('adminDestinosList');
         const toast = document.getElementById('toast');
 
         // ============================================================
-        // 4. FUNÇÕES DE API (integração com Neon)
+        // 4. FUNÇÕES DE API
         // ============================================================
 
         async function fetchDestinos() {
             try {
                 const response = await fetch(`${API_BASE}/destinos`);
                 if (!response.ok) throw new Error('Erro ao buscar destinos');
-                const data = await response.json();
-                return data;
+                return await response.json();
             } catch (error) {
                 console.error('❌ Erro fetchDestinos:', error);
-                showToast('Erro ao carregar destinos. Usando dados locais.', 'error');
+                showToast('Erro ao carregar destinos', 'error');
                 return getDefaultDestinos();
             }
         }
@@ -1054,6 +1091,37 @@
             destinos.forEach((d) => {
                 const card = document.createElement('div');
                 card.className = 'destino-card';
+
+                // Verifica se o usuário está logado como cliente para mostrar botão de compra
+                const isCliente = currentUser && currentUser.role === 'cliente';
+                const isAdmin = currentUser && currentUser.role === 'admin';
+
+                let botoes = '';
+
+                if (isCliente) {
+                    // Cliente vê botão de compra que abre WhatsApp
+                    botoes = `
+                                <a href="https://wa.me/${d.whats || '5521991864436'}?text=Olá! Quero comprar o pacote para ${encodeURIComponent(d.nome)}" 
+                                   target="_blank" class="btn-whats">
+                                    <i class="fab fa-whatsapp"></i> Comprar agora
+                                </a>
+                            `;
+                } else if (isAdmin) {
+                    // Admin vê botão de gerenciamento
+                    botoes = `
+                                <button class="btn-comprar-cliente" onclick="showToast('Modo Admin: Edite no painel', 'info')">
+                                    <i class="fas fa-edit"></i> Gerenciar
+                                </button>
+                            `;
+                } else {
+                    // Visitante (não logado) vê botão de compra com aviso
+                    botoes = `
+                                <button class="btn-whats" onclick="showToast('Faça login para comprar!', 'info')">
+                                    <i class="fas fa-lock"></i> Comprar (login)
+                                </button>
+                            `;
+                }
+
                 card.innerHTML = `
                             <div class="destino-img" style="background: #dce6f5;">
                                 <span class="emoji">${d.emoji || '✈️'}</span>
@@ -1063,10 +1131,7 @@
                                 <h4>${d.nome}</h4>
                                 <p class="descricao">${d.texto || 'Pacote especial'}</p>
                                 <div class="preco">${d.preco} <small>em ${d.parcelas || '10x'}</small></div>
-                                <a href="https://wa.me/${d.whats || '5521991864436'}?text=Olá! Quero comprar o pacote para ${encodeURIComponent(d.nome)}" 
-                                   target="_blank" class="btn-whats">
-                                    <i class="fab fa-whatsapp"></i> Comprar agora
-                                </a>
+                                ${botoes}
                             </div>
                         `;
                 track.appendChild(card);
@@ -1079,9 +1144,8 @@
             if (!track.firstChild || track.children.length === 0) return;
 
             const firstCard = track.firstChild;
-            const cardWidth = firstCard.offsetWidth + 28; // gap de 1.8rem ≈ 28px
+            const cardWidth = firstCard.offsetWidth + 28;
 
-            // Limitar índice
             const maxIndex = Math.max(0, destinos.length - 1);
             if (currentIndex > maxIndex) currentIndex = maxIndex;
 
@@ -1124,9 +1188,7 @@
             if (type === 'success') toast.classList.add('success');
             if (type === 'error') toast.classList.add('error');
 
-            // Forçar reflow para reiniciar animação
             void toast.offsetWidth;
-
             toast.classList.add('show');
 
             clearTimeout(toastTimeout);
@@ -1146,8 +1208,6 @@
                 return;
             }
             loginModal.classList.add('active');
-
-            // Resetar campos
             loginUser.value = 'cliente';
             loginPass.value = '123456';
             document.querySelector('input[name="role"][value="cliente"]').checked = true;
@@ -1180,6 +1240,7 @@
                 if (result.success) {
                     currentUser = result.user;
                     userNameDisplay.textContent = currentUser.name;
+                    roleBadge.textContent = currentUser.role === 'admin' ? 'Admin' : 'Cliente';
                     userDisplay.style.display = 'flex';
                     loginTrigger.style.display = 'none';
 
@@ -1188,14 +1249,16 @@
                         document.getElementById('badgePromo').innerHTML =
                             '<i class="fas fa-crown"></i> Modo Admin';
                         renderAdminList();
-                        showToast(`✅ Bem-vindo, Administrador!`, 'success');
+                        showToast('✅ Bem-vindo, Administrador!', 'success');
                     } else {
                         adminPanel.style.display = 'none';
                         document.getElementById('badgePromo').innerHTML =
                             '<i class="fas fa-calendar-check"></i> 15/06 a 17/06';
-                        showToast(`✅ Bem-vindo, ${currentUser.name}!`, 'success');
+                        showToast(`✅ Bem-vindo, ${currentUser.name}! Agora você pode comprar`, 'success');
                     }
 
+                    // Recarregar carrossel para mostrar botões corretos
+                    renderCarousel();
                     closeModal();
                 }
             } catch (error) {
@@ -1211,13 +1274,15 @@
             document.getElementById('badgePromo').innerHTML =
                 '<i class="fas fa-calendar-check"></i> 15/06 a 17/06';
             showToast('👋 Você saiu da sua conta', 'info');
+
+            // Recarregar carrossel para mostrar botões de visitante
+            renderCarousel();
         });
 
-        // Permitir login com Enter
+        // Enter para login
         loginPass.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') loginBtn.click();
         });
-
         loginUser.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') loginBtn.click();
         });
@@ -1231,7 +1296,7 @@
 
             if (!destinos || destinos.length === 0) {
                 adminDestinosList.innerHTML = `
-                            <div style="text-align:center; padding: 1rem; color: #5f6f80;">
+                            <div class="empty-message">
                                 <i class="fas fa-info-circle"></i> Nenhum destino cadastrado
                             </div>
                         `;
@@ -1261,13 +1326,12 @@
             });
         }
 
-        // Funções globais para serem chamadas inline
+        // Funções globais
         window.removerDestino = async function(id) {
             if (!confirm('⚠️ Tem certeza que deseja remover este destino?')) return;
 
             try {
                 await deleteDestino(id);
-                // Recarregar dados
                 destinos = await fetchDestinos();
                 renderCarousel();
                 if (currentUser && currentUser.role === 'admin') {
@@ -1298,12 +1362,18 @@
             if (novoEmoji === null) return;
             if (novoEmoji.trim()) d.emoji = novoEmoji.trim();
 
+            const novoTexto = prompt('✏️ Nova descrição:', d.texto || 'Pacote especial');
+            if (novoTexto === null) return;
+            if (novoTexto.trim()) d.texto = novoTexto.trim();
+
             try {
                 await updateDestino(id, {
                     nome: d.nome,
                     preco: d.preco,
-                    emoji: d.emoji
+                    emoji: d.emoji,
+                    texto: d.texto
                 });
+                destinos = await fetchDestinos();
                 renderCarousel();
                 if (currentUser && currentUser.role === 'admin') {
                     renderAdminList();
@@ -1325,7 +1395,6 @@
                 return;
             }
 
-            // Verificar se já existe
             if (destinos.some(d => d.nome.toLowerCase() === nome.toLowerCase())) {
                 showToast('⚠️ Este destino já existe!', 'error');
                 return;
@@ -1356,7 +1425,7 @@
             }
         });
 
-        // Permitir adicionar com Enter
+        // Enter para adicionar
         document.getElementById('newDestinoNome')?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') document.getElementById('addDestinoBtn').click();
         });
@@ -1376,22 +1445,18 @@
                 destinos = await fetchDestinos();
                 renderCarousel();
 
-                // Se estiver logado como admin, mostrar painel
-                if (currentUser && currentUser.role === 'admin') {
-                    adminPanel.style.display = 'block';
-                    renderAdminList();
-                }
-
-                console.log('🚀 Vai Voando · Frontend carregado com sucesso!');
+                // Verificar se já está logado (por simplicidade, mantém deslogado)
+                console.log('🚀 Vai Voando carregado!');
                 console.log(`📦 ${destinos.length} destinos carregados`);
-                console.log('🔗 API:', API_BASE);
+                console.log('💡 Dicas:');
+                console.log('  - cliente/123456 = Cliente (pode comprar)');
+                console.log('  - adm/123456 = Administrador (gerencia)');
             } catch (error) {
                 console.error('❌ Erro na inicialização:', error);
                 showToast('Erro ao carregar o site', 'error');
             }
         }
 
-        // Iniciar
         init();
 
         // ============================================================
@@ -1399,12 +1464,9 @@
         // ============================================================
 
         document.addEventListener('keydown', (e) => {
-            // ESC fecha modal
             if (e.key === 'Escape' && loginModal.classList.contains('active')) {
                 closeModal();
             }
-
-            // Setas no carrossel
             if (e.key === 'ArrowLeft' && !loginModal.classList.contains('active')) {
                 prevBtn.click();
             }
@@ -1413,12 +1475,7 @@
             }
         });
 
-        console.log('✅ Vai Voando · Frontend completo carregado!');
-        console.log('💡 Dicas:');
-        console.log('  - Use cliente/123456 para login como cliente');
-        console.log('  - Use adm/123456 para login como administrador');
-        console.log('  - Setas ← → para navegar no carrossel');
-        console.log('  - ESC para fechar o modal');
+        console.log('✅ Vai Voando pronto!');
     </script>
 </body>
 </html>
